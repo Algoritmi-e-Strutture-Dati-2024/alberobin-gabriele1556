@@ -1,0 +1,187 @@
+#include <iostream>
+#include <string>
+
+template <typename T>
+class AlberoBinario {
+private:
+    T nodi[100];
+    bool presente[100]; // Array per verificare se un nodo è presente
+
+public:
+    AlberoBinario(); // Costruttore
+    bool alberoVuoto() const; // Verifica se l'albero è vuoto
+    bool insRadice(const T& valore); // Inserisce la radice
+    T radice() const; // Restituisce il valore della radice
+    bool isFoglia(int indice) const; // Verifica se un nodo è foglia
+    int figlioSinistro(int indice) const; // Restituisce l'indice del figlio sinistro
+    int figlioDestro(int indice) const; // Restituisce l'indice del figlio destro
+    bool insFiglioSinistro(int indice, const T& valore); // Inserisce il figlio sinistro
+    bool insFiglioDestro(int indice, const T& valore); // Inserisce il figlio destro
+    bool rimuovi(int indice); // Rimuove un nodo (solo se foglia)
+    void stampa() const; // Stampa la struttura dell'albero
+};
+
+// Costruttore
+template <typename T>
+AlberoBinario<T>::AlberoBinario() {
+    for (int i = 0; i < 100; ++i) {
+        presente[i] = false; // Inizializza tutti i nodi come non presenti
+    }
+}
+
+// Verifica se l'albero è vuoto
+template <typename T>
+bool AlberoBinario<T>::alberoVuoto() const {
+    return presente[0] == false; // Controlla se la radice è presente
+}
+
+// Inserimento della radice
+template <typename T>
+bool AlberoBinario<T>::insRadice(const T& valore) {
+    if (presente[0] == true) {
+        return false; // Radice già presente
+    }
+    nodi[0] = valore; // Assegna il valore alla radice
+    presente[0] = true; // Imposta la radice come presente
+    return true;
+}
+
+// Leggere la radice
+template <typename T>
+T AlberoBinario<T>::radice() const {
+    if (presente[0] == false) {
+        std::cout << "Errore: L'albero è vuoto." << std::endl;
+        return T(); // Restituisce un valore di default se l'albero è vuoto
+    }
+    return nodi[0]; // Restituisce il valore della radice
+}
+
+// Verifica se un nodo è foglia
+template <typename T>
+bool AlberoBinario<T>::isFoglia(int indice) const {
+    if (presente[indice] == false) {
+        std::cout << "Errore: Nodo non presente." << std::endl;
+        return false;
+    }
+    // Un nodo è una foglia se non ha figli sinistri né destri
+    return presente[figlioSinistro(indice)] == false && presente[figlioDestro(indice)] == false;
+}
+
+// Accesso al figlio sinistro
+template <typename T>
+int AlberoBinario<T>::figlioSinistro(int indice) const {
+    return 2 * indice + 1; // Calcola l'indice del figlio sinistro
+}
+
+// Accesso al figlio destro
+template <typename T>
+int AlberoBinario<T>::figlioDestro(int indice) const {
+    return 2 * indice + 2; // Calcola l'indice del figlio destro
+}
+
+// Inserimento del figlio sinistro
+template <typename T>
+bool AlberoBinario<T>::insFiglioSinistro(int indice, const T& valore) {
+    int sinistro = figlioSinistro(indice);
+    if (presente[indice] == false) {
+        std::cout << "Errore: Nodo genitore non presente." << std::endl;
+        return false;
+    }
+    if (presente[sinistro] == true) {
+        std::cout << "Errore: Figlio sinistro già presente." << std::endl;
+        return false;
+    }
+    nodi[sinistro] = valore; // Assegna il valore al figlio sinistro
+    presente[sinistro] = true; // Imposta il figlio sinistro come presente
+    return true;
+}
+
+// Inserimento del figlio destro
+template <typename T>
+bool AlberoBinario<T>::insFiglioDestro(int indice, const T& valore) {
+    int destro = figlioDestro(indice);
+    if (presente[indice] == false) {
+        std::cout << "Errore: Nodo genitore non presente." << std::endl;
+        return false;
+    }
+    if (presente[destro] == true) {
+        std::cout << "Errore: Figlio destro già presente." << std::endl;
+        return false;
+    }
+    nodi[destro] = valore; // Assegna il valore al figlio destro
+    presente[destro] = true; // Imposta il figlio destro come presente
+    return true;
+}
+
+// Rimozione di un nodo (solo se foglia)
+template <typename T>
+bool AlberoBinario<T>::rimuovi(int indice) {
+    if (presente[indice] == false) {
+        std::cout << "Errore: Nodo non presente." << std::endl;
+        return false;
+    }
+    if (presente[figlioSinistro(indice)] == true || presente[figlioDestro(indice)] == true) {
+        std::cout << "Errore: Il nodo non è una foglia e non può essere rimosso." << std::endl;
+        return false;
+    }
+    presente[indice] = false; // Imposta il nodo come non presente
+    return true;
+}
+
+// Stampa dell'albero
+template <typename T>
+void AlberoBinario<T>::stampa() const {
+    for (int i = 0; i < 100; ++i) {
+        if (presente[i] == true) {
+            std::cout << "Pos " << i << ", Valore: " << nodi[i];
+            if (presente[figlioSinistro(i)] == true) {
+                std::cout << ", Figlio sinistro: " << nodi[figlioSinistro(i)];
+            } else {
+                std::cout << ", Figlio sinistro: null";
+            }
+            if (presente[figlioDestro(i)] == true) {
+                std::cout << ", Figlio destro: " << nodi[figlioDestro(i)];
+            } else {
+                std::cout << ", Figlio destro: null";
+            }
+            std::cout << std::endl;
+        }
+    }
+}
+
+// Esempio di utilizzo
+int main() {
+    AlberoBinario<int> albero;
+
+    // Creazione di un albero con radice
+    albero.insRadice(10);
+
+    // Inserimento di nodi figli
+    albero.insFiglioSinistro(0, 20);
+    albero.insFiglioDestro(0, 30);
+    albero.insFiglioSinistro(1, 40);
+    albero.insFiglioDestro(1, 50);
+
+    // Stampa della struttura iniziale dell'albero
+    std::cout << "Stampa dell'albero iniziale:" << std::endl;
+    albero.stampa();
+
+    // Stampa dei figli sinistro e destro di un nodo specifico
+    int nodo = 0;
+    std::cout << "\nFiglio sinistro di nodo " << nodo << ": " << albero.figlioSinistro(nodo) << std::endl;
+    std::cout << "Figlio destro di nodo " << nodo << ": " << albero.figlioDestro(nodo) << std::endl;
+
+    // Tentativo di rimozione di un nodo non foglia
+    if (albero.rimuovi(0) == false) {
+        std::cout << "Errore durante la rimozione del nodo." << std::endl;
+    }
+
+    // Rimozione di un nodo foglia
+    albero.rimuovi(4); // Rimuove il nodo foglia 50
+
+    // Stampa della struttura finale dell'albero
+    std::cout << "\nStampa dell'albero finale:" << std::endl;
+    albero.stampa();
+
+    return 0;
+}
